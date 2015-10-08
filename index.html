@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Bootstrap 101 Template</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- <link rel="stylesheet" href="style.css" type="text/css">-->
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="http://cdn.mlkcca.com/v2.0.0/milkcocoa.js"></script>
+
+        <script>
+            $(function() {
+                //1.ミルクココアインスタンスを作成
+                //var milkcocoa = new MilkCocoa("leadifc51uav.mlkcca.com");
+                var milkcocoa = new MilkCocoa("onifc51rff.mlkcca.com");
+
+                //2."message"データストアを作成
+                //var ds = milkcocoa.dataStore("chat");
+                var ds = milkcocoa.dataStore("image");
+
+                //3."message"データストアからメッセージを取ってくる
+                ds.stream().sort("desc").next(function(err, datas) {
+                    datas.forEach(function(data) {
+                        //renderimage(data);
+                    });
+                });
+
+                //4."message"データストアのプッシュイベントを監視
+                ds.on("push", function(e) {
+                    //renderimage(e);
+                });
+
+                //var last_image = "dummy";
+                //function renderimage(image) {
+
+                            
+                    
+                //    last_image = image.id;
+                //}
+                
+                
+                //document.getElementById("form").addEventListener("click", function(){
+                document.getElementById("form").onchange = function()
+                {
+                    var url = location.href;
+                    var path = location.pathname;
+                    
+                    // 変数の宣言
+                    var filelist;
+                    var file;
+                    var fr;
+                    var result;
+
+                    // ファイルリストを取得
+                    filelist = this.files;
+
+                    // 結果エリアのエレメントを取得
+                    result = document.getElementById("result") ;
+
+                    // 結果エリアを一度リセット
+                    result.innerHTML = "";
+
+                    // ローカル画像を表示する (枚数分)
+                    for(var i=0, l=filelist.length; l>i; i++ )
+                    {
+                        // 対象のファイルを取得
+                        file = filelist;
+    
+                        // ブラウザごとの違いをフォローする
+                        window.URL = window.URL || window.webkitURL ;
+
+                        // Blob URLの作成
+                        src = window.URL.createObjectURL(file) ;
+
+                        // HTMLに書き出し
+                        result.innerHTML += '<img src="' + src + '" width="auto" height="100">' ;
+                    
+                        
+                        
+                        /*
+                        // [FileReader]クラスを起動
+                        fr = new FileReader();
+                        fr.readAsDataURL(file);
+                        
+                        // 読み込み後の処理
+                        $(function () 
+                        //fr.onload = function()
+                        {
+                            var dataURL = fr.result;
+                            
+                            // HTMLに書き出し
+                            result.innerHTML += '<img src="' + img_path + '" width="auto" height="100">' ;
+                            var img_src = $("<img>").attr("src", fr.result);
+                            $('span').html(img_src);
+    
+                        });*/
+                        
+                        ds.push({
+                            content: img_path
+                        }, function (e) {});
+                    }
+                }
+                
+                function post() {
+                    //5."message"データストアにメッセージをプッシュする
+                    var content = escapeHTML($("#content").val());
+                    if (content && content !== "") {
+                        ds.push({
+                            title: "タイトル",
+                            content: content,
+                            date: new Date().getTime()
+                        }, function (e) {});
+                    }
+                    $("#content").val("");
+                }
+
+                $('#form').click(function () {
+                    post();
+                })
+        
+            });
+            
+            //インジェクション対策
+            function escapeHTML(val) {
+                return $('<div>').text(val).html();
+            };
+        </script>
+        
+    </head>
+
+    <body>
+        <div class="container">
+
+            <!-- 画像を出力するエリア [id=result] -->
+            <div id="result" style="width:960px; height:400px;"></div>
+
+            <form enctype="multipart/form-data" method="post">
+                <input type="file" accept="image/*" id="form" multiple>
+            </form>
+    
+            <!--
+            <input type="file" accept="image/*" id="form" multiple>
+            
+             フォーム
+            <p><input type="file" id="form"></p>            
+            <p><input type="file" multiple="multiple" id="form"></p>-->
+                    
+        </div>
+
+        <p class="footer"><strong>Powered by <a href="http://mlkcca.com/">Milkcocoa</a></strong></p>
+        
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="js/bootstrap.min.js"></script>
+        
+    </body>
+
+</html>
